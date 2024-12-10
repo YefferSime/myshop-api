@@ -13,21 +13,21 @@ const server = http.createServer(app);
 
 // Configuración de CORS
 app.use(cors({
-    origin: ['https://my-shop-navy.vercel.app', 'http://localhost:3001'],
+    origin: process.env.mode === 'pro' 
+      ? [process.env.client_customer_production_url, process.env.client_admin_production_url] 
+      : ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true
-}));
-
-// Configura para servir archivos estáticos desde la carpeta uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Configuración de Socket.io
-
-const io = socket(server, {
+  }));
+  
+  const io = socket(server, {
     cors: {
-        origin: '*',
-        credentials: true
+      origin: process.env.mode === 'pro' 
+        ? [process.env.client_customer_production_url, process.env.client_admin_production_url] 
+        : ['http://localhost:3000', 'http://localhost:3001'],
+      credentials: true
     }
-});
+  });
+  
 // Variables para manejar usuarios
 var allCustomer = [];
 var allSeller = [];
